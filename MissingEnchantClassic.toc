@@ -1,0 +1,7 @@
+## Interface: 11508
+## Title: MissingEnchantClassic
+## Notes: Flags unenchanted items in the character sheet
+## Author: Timhagner
+## Version: 1.0
+
+MissingEnchantClassic.lua
