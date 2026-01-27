@@ -5,8 +5,9 @@
 local frame = CreateFrame("Frame")
 local slotTexts = {}
 
--- Default font size
+-- Defaults
 local DEFAULT_FONT_SIZE = 12
+local DEFAULT_FONT = "Interface\\AddOns\\MissingEnchantClassic\\fonts\\Expressway.ttf"
 
 -- Classic enchantable slots
 local enchantableSlots = {
@@ -18,33 +19,87 @@ local enchantableSlots = {
     "CharacterHandsSlot",
     "CharacterLegsSlot",
     "CharacterFeetSlot",
-    "CharacterMainHandSlot"
+    "CharacterMainHandSlot",
+    "CharacterSecondaryHandSlot",
 }
 
 -- Default positions for each slot
 local DEFAULT_POSITIONS = {
-    ["CharacterHeadSlot"]      = { side = "RIGHT", x = 3,  y = -5 },
-    ["CharacterShoulderSlot"]  = { side = "RIGHT", x = 3,  y = -5 },
-    ["CharacterBackSlot"]      = { side = "RIGHT", x = 3,  y = -5 },
-    ["CharacterChestSlot"]     = { side = "RIGHT", x = 3,  y = -5 },
-    ["CharacterWristSlot"]     = { side = "RIGHT", x = 3,  y = -5 },
-    ["CharacterHandsSlot"]     = { side = "LEFT",  x = -3, y = -5 },
-    ["CharacterLegsSlot"]      = { side = "LEFT",  x = -3, y = -5 },
-    ["CharacterFeetSlot"]      = { side = "LEFT",  x = -3, y = -5 },
-    ["CharacterMainHandSlot"]  = { side = "LEFT",  x = 0,  y = -16 },
+    ["CharacterHeadSlot"]           = { side = "RIGHT", x = 9,  y = -22 },
+    ["CharacterShoulderSlot"]       = { side = "RIGHT", x = 9,  y = -22 },
+    ["CharacterBackSlot"]           = { side = "RIGHT", x = 9,  y = -22 },
+    ["CharacterChestSlot"]          = { side = "RIGHT", x = 9,  y = -22 },
+    ["CharacterWristSlot"]          = { side = "RIGHT", x = 9,  y = -22 },
+    ["CharacterHandsSlot"]          = { side = "LEFT",  x = -9, y = -22 },
+    ["CharacterLegsSlot"]           = { side = "LEFT",  x = -9, y = -22 },
+    ["CharacterFeetSlot"]           = { side = "LEFT",  x = -9, y = -22 },
+    ["CharacterMainHandSlot"]       = { side = "LEFT",  x = -9,  y = -22 },
+    ["CharacterSecondaryHandSlot"]  = { side = "RIGHT",  x = 9,  y = -22 },
 }
 
 -- Saved variables
 MissingEnchantClassicDB = MissingEnchantClassicDB or {}
 MissingEnchantClassicDB.textPositions = MissingEnchantClassicDB.textPositions or {}
 MissingEnchantClassicDB.fontSize = MissingEnchantClassicDB.fontSize or DEFAULT_FONT_SIZE
+MissingEnchantClassicDB.font = MissingEnchantClassicDB.font or DEFAULT_FONT
 
 -----------------------------------------------------
 -- Utility: Get slot icon safely
 -----------------------------------------------------
 local function GetSlotIcon(slotButton, slotName)
     if not slotButton then return nil end
-    return slotButton.icon or slotButton.Icon or slotButton.iconTexture or slotButton.IconTexture or _G[slotName .. "IconTexture"]
+    return slotButton.icon
+        or slotButton.Icon
+        or slotButton.iconTexture
+        or slotButton.IconTexture
+        or _G[slotName .. "IconTexture"]
+end
+
+-----------------------------------------------------
+-- Utility: Apply font safely
+-----------------------------------------------------
+local function ApplyFont(fontString)
+    local success = fontString:SetFont(
+        MissingEnchantClassicDB.font,
+        MissingEnchantClassicDB.fontSize,
+        "OUTLINE"
+    )
+
+    if not success then
+        fontString:SetFont(
+            "Fonts\\FRIZQT__.TTF",
+            MissingEnchantClassicDB.fontSize,
+            "OUTLINE"
+        )
+    end
+end
+
+-----------------------------------------------------
+-- Utility: Off-hand enchant eligibility
+-----------------------------------------------------
+local function CanOffhandBeEnchanted(itemLink)
+    local _, _, _, _, _, itemClass, _, _, equipLoc = GetItemInfo(itemLink)
+
+    if not equipLoc then
+        return false
+    end
+
+    -- Held in Off-hand (cannot be enchanted)
+    if equipLoc == "INVTYPE_HOLDABLE" then
+        return false
+    end
+
+    -- Shields can be enchanted
+    if equipLoc == "INVTYPE_SHIELD" then
+        return true
+    end
+
+    -- One-hand weapons can be enchanted
+    if itemClass == "Weapon" then
+        return true
+    end
+
+    return false
 end
 
 -----------------------------------------------------
@@ -56,15 +111,18 @@ local function CreateSlotText(slotName)
 
     if not slotTexts[slotName] then
         local text = slotButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        text:SetFont("Fonts\\FRIZQT__.TTF", MissingEnchantClassicDB.fontSize, "OUTLINE")
+        ApplyFont(text)
         text:SetTextColor(1, 0, 0)
         text:SetText("")
         slotTexts[slotName] = text
     end
 
     local text = slotTexts[slotName]
-    local pos = MissingEnchantClassicDB.textPositions[slotName] or DEFAULT_POSITIONS[slotName] or { side = "RIGHT", x = 3, y = -5 }
+    local pos = MissingEnchantClassicDB.textPositions[slotName]
+        or DEFAULT_POSITIONS[slotName]
+        or { side = "RIGHT", x = 3, y = -5 }
 
+    text:ClearAllPoints()
     if pos.side == "LEFT" then
         text:SetPoint("TOPRIGHT", slotButton, "TOPLEFT", pos.x, pos.y)
     else
@@ -86,12 +144,26 @@ local function CheckEquipment()
 
         if slotID then
             local itemLink = GetInventoryItemLink("player", slotID)
+
             if itemLink then
-                local enchantID = tonumber(itemLink:match("item:%d+:(%d*):"))
-                if not enchantID or enchantID == 0 then
-                    textLabel:SetText("Not enchanted!")
-                    if icon then icon:SetVertexColor(1, 0, 0) end
+                local shouldCheckEnchant = true
+
+                -- Special handling for off-hand
+                if slotName == "CharacterSecondaryHandSlot" then
+                    shouldCheckEnchant = CanOffhandBeEnchanted(itemLink)
+                end
+
+                if shouldCheckEnchant then
+                    local enchantID = tonumber(itemLink:match("item:%d+:(%d*):"))
+                    if not enchantID or enchantID == 0 then
+                        textLabel:SetText("Not enchanted!")
+                        if icon then icon:SetVertexColor(1, 0, 0) end
+                    else
+                        textLabel:SetText("")
+                        if icon then icon:SetVertexColor(1, 1, 1) end
+                    end
                 else
+                    -- Item cannot be enchanted
                     textLabel:SetText("")
                     if icon then icon:SetVertexColor(1, 1, 1) end
                 end
@@ -114,21 +186,13 @@ function MissingEnchantClassic_SetSlotPosition(slotName, side, x, y)
     end
 
     MissingEnchantClassicDB.textPositions[slotName] = { side = side, x = x, y = y }
-
-    if slotTexts[slotName] then
-        local slotButton = _G[slotName]
-        if side == "LEFT" then
-            slotTexts[slotName]:SetPoint("TOPRIGHT", slotButton, "TOPLEFT", x, y)
-        else
-            slotTexts[slotName]:SetPoint("TOPLEFT", slotButton, "TOPRIGHT", x, y)
-        end
-    end
+    CreateSlotText(slotName)
 end
 
 function MissingEnchantClassic_SetFontSize(size)
     MissingEnchantClassicDB.fontSize = size
     for _, text in pairs(slotTexts) do
-        text:SetFont("Fonts\\FRIZQT__.TTF", size, "OUTLINE")
+        ApplyFont(text)
     end
 end
 
@@ -137,17 +201,20 @@ end
 -----------------------------------------------------
 SLASH_MEC1 = "/mec"
 SlashCmdList["MEC"] = function(msg)
-    local cmd, slot, side, x, y = msg:match("(%w+)%s*(%w*)%s*(%w*)%s*(%-?%d*)%s*(%-?%d*)")
-    if cmd == "setpos" and slot and side and x ~= "" and y ~= "" then
-        MissingEnchantClassic_SetSlotPosition(slot, side, tonumber(x), tonumber(y))
-        print("MEC: Updated position for", slot)
-    elseif cmd == "fontsize" and slot ~= "" then
-        MissingEnchantClassic_SetFontSize(tonumber(slot))
-        print("MEC: Updated font size to", slot)
+    local cmd, arg1, arg2, x, y = msg:match("(%S+)%s*(%S*)%s*(%S*)%s*(%-?%d*)%s*(%-?%d*)")
+
+    if cmd == "setpos" and arg1 ~= "" and arg2 ~= "" and x ~= "" and y ~= "" then
+        MissingEnchantClassic_SetSlotPosition(arg1, arg2, tonumber(x), tonumber(y))
+        print("MEC: Updated position for", arg1)
+
+    elseif cmd == "fontsize" and arg1 ~= "" then
+        MissingEnchantClassic_SetFontSize(tonumber(arg1))
+        print("MEC: Updated font size to", arg1)
+
     else
         print("MEC Commands:")
-        print("/mec setpos <SlotName> <LEFT|RIGHT> <X> <Y>  - Set text position")
-        print("/mec fontsize <Size>                        - Set text font size")
+        print("/mec setpos <SlotName> <LEFT|RIGHT> <X> <Y>")
+        print("/mec fontsize <Size>")
     end
 end
 
@@ -157,6 +224,7 @@ end
 frame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("UNIT_INVENTORY_CHANGED")
+
 frame:SetScript("OnEvent", function()
     if CharacterFrame and CharacterFrame:IsShown() then
         CheckEquipment()
@@ -165,7 +233,7 @@ end)
 
 CharacterFrame:HookScript("OnShow", CheckEquipment)
 CharacterFrame:HookScript("OnUpdate", function()
-    if CharacterFrame and CharacterFrame:IsShown() then
+    if CharacterFrame:IsShown() then
         CheckEquipment()
     end
 end)
