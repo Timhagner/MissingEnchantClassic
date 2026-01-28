@@ -27,6 +27,24 @@
         "UIDropDownMenu_SetSelectedValue",
         "UIDropDownMenu_SetText",
         "UIDropDownMenu_GetSelectedValue",
-        "UIDropDownMenu_CreateInfo"
+        "UIDropDownMenu_CreateInfo",
+        "ReloadUI",
+        "DEFAULT_CHAT_FRAME",
+        "SELECTED_CHAT_FRAME",
+        "ACCEPT",
+        "CANCEL",
+        "hash_SlashCmdList",
+        "NORMAL_FONT_COLOR_CODE",
+        "FONT_COLOR_CODE_CLOSE",
+        "CLOSE",
+        "SetDesaturation",
+        "ColorPickerFrame",
+        "ChatEdit_InsertLink",
+        "OKAY",
+        "ChatFrameUtil",
+        "NOT_BOUND",
+        "IsSecureCmd",
+        "NUM_CHAT_WINDOWS",
+        "ChatEdit_GetActiveWindow"
     ]
 }
