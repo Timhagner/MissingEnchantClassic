@@ -1,8 +1,4 @@
 {
-    "Lua.diagnostics.globals": [
-        "SlashCmdList",
-        "CharacterFrame"
-    ],
     "Lua.runtime.version": "Lua 5.1",
     "Lua.runtime.builtin": {
         "basic": "disable",
@@ -17,5 +13,20 @@
     },
     "Lua.workspace.library": [
         "~\\.vscode\\extensions\\ketho.wow-api-0.22.1\\Annotations\\Core"
+    ],
+    "Lua.diagnostics.globals": [
+        "SlashCmdList",
+        "CharacterFrame",
+        "InspectFrame",
+        "StaticPopupDialogs",
+        "UIDropDownMenu_SetWidth",
+        "UIDropDownMenu_Initialize",
+        "StaticPopup_Show",
+        "Settings",
+        "UIDropDownMenu_AddButton",
+        "UIDropDownMenu_SetSelectedValue",
+        "UIDropDownMenu_SetText",
+        "UIDropDownMenu_GetSelectedValue",
+        "UIDropDownMenu_CreateInfo"
     ]
 }

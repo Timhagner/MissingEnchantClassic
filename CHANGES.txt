@@ -1,0 +1,78 @@
+commit f1425097294ccb1234963daf79615d6d92a50a78
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Jan 27 06:12:47 2026 +0100
+
+    Added font folder
+    
+    Added font folder
+
+commit f1425097294ccb1234963daf79615d6d92a50a78
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Jan 27 06:12:47 2026 +0100
+
+    Added font folder
+    
+    Added font folder
+
+commit 2ffc5904b4af1f459e07e6d5c6498d4db78cc500
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Jan 27 06:11:57 2026 +0100
+
+    Update settings.json
+
+commit 4b50543186bff2746041d7f6a1f0421be2c60570
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Jan 27 06:10:58 2026 +0100
+
+    Create settings.json
+
+commit 5c8e6ade782e552bfaeaac10c56952f2f7a306cd
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Jan 27 05:58:36 2026 +0100
+
+    Added Shield+Off-hand
+    
+    Added Shield+Off-hand
+
+commit 5c8e6ade782e552bfaeaac10c56952f2f7a306cd
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Jan 27 05:58:36 2026 +0100
+
+    Added Shield+Off-hand
+    
+    Added Shield+Off-hand
+
+commit bdca5df8c5f96c478a98d2dd3845c2a3d13abbfb
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Sun Jan 4 09:27:53 2026 +0100
+
+    Added MEC options to change text position
+    
+    Added MEC options to change text position
+
+commit 82846726bcba84ad32a8a45202986600b15c5b48
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Dec 9 20:07:57 2025 +0100
+
+    Update LICENSE
+
+commit 55b618bd2dddda7d38d2d65434d646fd57e863b5
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Dec 9 20:02:57 2025 +0100
+
+    Create README.md
+
+commit 8a76c22ac2e8ea398117109507cf13a126bccfc9
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Dec 9 20:02:21 2025 +0100
+
+    Initial git release
+    
+    Initial git release
+
+commit 7a1144e64e87112a99614775c1208369a95e3aa4
+Author: Timhagner <Timhagner@nordonic.com>
+Date:   Tue Dec 9 19:52:17 2025 +0100
+
+    Initial commit
+
